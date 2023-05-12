@@ -89,10 +89,10 @@ def discount_and_normalize_rewards(all_rewards, discount_rate):
     Takes in all rewards, applies helper_discount function and then normalizes
     using mean and std.
     '''
-    all_discounted_rewards = []
-    for rewards in all_rewards:
-        all_discounted_rewards.append(helper_discount_rewards(rewards,discount_rate))
-
+    all_discounted_rewards = [
+        helper_discount_rewards(rewards, discount_rate)
+        for rewards in all_rewards
+    ]
     flat_rewards = np.concatenate(all_discounted_rewards)
     reward_mean = flat_rewards.mean()
     reward_std = flat_rewards.std()
@@ -114,22 +114,20 @@ with tf.Session() as sess:
 
 
     for iteration in range(num_iterations):
-        print("Currently on Iteration: {} \n".format(iteration) )
+        print(f"Currently on Iteration: {iteration} \n")
 
         all_rewards = []
         all_gradients = []
 
         # Play n amount of game rounds
-        for game in range(num_game_rounds):
-
+        for _ in range(num_game_rounds):
             current_rewards = []
             current_gradients = []
 
             observations = env.reset()
 
             # Only allow n amount of steps in game
-            for step in range(max_game_steps):
-
+            for _ in range(max_game_steps):
                 # Get Actions and Gradients
                 action_val, gradients_val = sess.run([action, gradients], feed_dict={X: observations.reshape(1, num_inputs)})
 
@@ -179,7 +177,7 @@ with tf.Session() as sess:
     new_saver = tf.train.import_meta_graph('/models/my-650-step-model.meta')
     new_saver.restore(sess,'/models/my-650-step-model')
 
-    for x in range(500):
+    for _ in range(500):
         env.render()
         action_val, gradients_val = sess.run([action, gradients], feed_dict={X: observations.reshape(1, num_inputs)})
         observations, reward, done, info = env.step(action_val[0][0])

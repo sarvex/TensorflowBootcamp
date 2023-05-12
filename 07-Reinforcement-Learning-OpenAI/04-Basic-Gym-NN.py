@@ -50,7 +50,7 @@ avg_steps = []
 env = gym.make("CartPole-v1")
 with tf.Session() as sess:
     init.run()
-    for i_episode in range(epi):
+    for _ in range(epi):
         obs = env.reset()
 
         for step in range(step_limit):
@@ -59,7 +59,9 @@ with tf.Session() as sess:
             obs, reward, done, info = env.step(action_val[0][0])
             if done:
                 avg_steps.append(step)
-                print('Done after {} steps'.format(step))
+                print(f'Done after {step} steps')
                 break
-print("After {} episodes the average cart steps before done was {}".format(epi,np.mean(avg_steps)))
+print(
+    f"After {epi} episodes the average cart steps before done was {np.mean(avg_steps)}"
+)
 env.close()
